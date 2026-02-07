@@ -46,7 +46,7 @@ export async function updateUser(req:Request,res:Response){
 export  async function createProduct(req:Request,res:Response){
     let data:NewProduct = req.body;
 
-    let [product] = await  db.insert(products).values(dat);
+    let [product] = await  db.insert(products).values(data);
 
     return customResponse(res,201,true,"create product",product)
 
