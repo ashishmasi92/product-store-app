@@ -25,7 +25,7 @@ export const getUserById  = async (id:string)=>{
     if(!userExist){
 throw  new Error('user not found with given id')
     }
-    let [user] = await  db.update(users).set(data).returning()
+    let [user] = await  db.update(users).set(data).where(eq(users.id,id)).returning()
     return user
 }
 

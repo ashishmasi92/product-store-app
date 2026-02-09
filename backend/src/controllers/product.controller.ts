@@ -36,6 +36,9 @@ export const getMyProducts = async (req: Request, res: Response) => {
     if (!myProducts) {
       return customResponse(res, 404, false, "no products found");
     }
+    if(myProducts.length === 0){
+      return customResponse(res, 404, false, "no products found");
+    }
 
     return customResponse(res, 200, true, "my products", myProducts);
   } catch (error) {
@@ -137,7 +140,7 @@ export const deleteProduct = async (req:Request,res:Response)=>{
     }
 let id = req.params.id;
 
-let userProduct = await productQueries.getCommentById(id as string)
+let userProduct = await productQueries.getProductById(id as string)
 
 if(!userProduct){
   return customResponse(res,404,false,"product not found with given id")

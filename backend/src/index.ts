@@ -60,11 +60,11 @@ const aj = arcjet({
 
 import router from "./routes/route.user";
 import productRoutes from "./routes/product.routes";
-import commmentRoutes from "./routes/comment.routes";
+import commentRoutes from "./routes/comment.routes";
 
 app.use("/api/v1/user",router);
 app.use("/api/v1/product",productRoutes);
-app.use("/api/v1/comment",commmentRoutes);
+app.use("/api/v1/comment",commentRoutes);
 
 
 app.get("/",(req:Request,res:Response)=>{
