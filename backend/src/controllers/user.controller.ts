@@ -2,6 +2,7 @@ import type {Request,Response} from "express";
 import customResponse from "../utils/customResponse";
 import {getAuth} from "@clerk/express";
 import {upsert} from "../model/queries";
+import bcrypt from "bcryptjs";
 
 
 
@@ -25,10 +26,12 @@ if([email,password,imageUrl].some((field)=>{
     return customResponse(res,400,false,"all field are required")
 }
 
+const hashedPassword = await bcrypt.hash(password, 12)
+
 let user = await upsert({
     id:userId,
     email,
-    password,
+    password: hashedPassword,
     imageUrl
 })
 

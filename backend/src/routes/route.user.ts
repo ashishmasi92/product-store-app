@@ -7,7 +7,7 @@ import { syncUser } from "../controllers/user.controller"
 const router = express.Router()
 
 
-router.post("/sync", requireAuth, syncUser)
+router.post("/sync", requireAuth(), syncUser)
 
 
 

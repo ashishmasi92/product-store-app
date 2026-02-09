@@ -46,9 +46,17 @@ try {
           }
     
     
-          let commentId = req.params.commentid
+          let commentId = req.params.commentId
           if(!commentId){
             return customResponse(res,400,false,"invalid comment id")
+          }
+          
+          const existing = await commentQuery.getCommentById(commentId)
+          if(!existing){
+            return customResponse(res,404,false,"comment not found")
+          }
+          if(existing.userId !== userId){
+            return customResponse(res,403,false,"forbidden")
           }
     
           let comment = await commentQuery.deleteComment(commentId) 
