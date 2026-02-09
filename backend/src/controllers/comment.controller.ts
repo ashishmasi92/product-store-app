@@ -1,9 +1,8 @@
 import type { NewComment } from "../model/schema";
 import * as commentQuery from "../model/queries";
-import { db } from "../db/db";
 import customResponse from "../utils/customResponse";
 import type { Request, Response } from "express";
-import { eq } from "drizzle-orm";
+
 import { getAuth } from "@clerk/express";
 
 export const createComment = async (req: Request, res: Response) => {
@@ -58,7 +57,10 @@ try {
           }
           return customResponse(res,200,true,"comment deleted",comment)
 } catch (error) {
-    console.log("error while delete comment", error);
+    const message = (error as Error)?.message;
+    if (message === "comment not found with given id") {
+      return customResponse(res, 404, false, "comment not found");
+    }
     return customResponse(res, 500, false, "internal error");
 }
 }
