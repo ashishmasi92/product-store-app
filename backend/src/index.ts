@@ -56,6 +56,13 @@ const aj = arcjet({
 });
 
 
+// routes
+
+import router from "./routes/route.user";
+
+app.use(router);
+
+
 app.get("/",(req:Request,res:Response)=>{
     res.json({
         message:"hello world say it"
