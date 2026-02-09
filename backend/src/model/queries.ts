@@ -1,6 +1,6 @@
 import {db} from "../db/db"
-import type {NewProduct, NewUser} from "./schema";
-import {products, users} from "./schema";
+import type {NewComment, NewProduct, NewUser} from "./schema";
+import {comments, products, users} from "./schema";
 import {eq} from "drizzle-orm";
 
 // User queries
@@ -11,7 +11,7 @@ export const createUser = async (data:NewUser) =>{
 }
 
 
-export const getUserById  = async (id:Number)=>{
+export const getUserById  = async (id:string)=>{
 
     return   db.query.users.findFirst({
         where:eq(users.id,id)
@@ -19,7 +19,7 @@ export const getUserById  = async (id:Number)=>{
 
 }
 
-    export const updateUser = async (id:Number,data:Partial<NewUser>)=>{
+    export const updateUser = async (id:string,data:Partial<NewUser>)=>{
 
     let userExist = await getUserById(id)
     if(!userExist){
@@ -73,6 +73,7 @@ export const getAllProductsByUserId = async (userId:string)=>{
 
     return db.query.products.findMany({
         with:{user:true},
+        where:eq(products.userId,userId),
            orderBy:(products,{desc})=> [desc(products.createdAt)]
     })
 }
@@ -83,8 +84,9 @@ export const updateProduct = async (id:string,data:Partial<NewProduct>)=>{
     if(!productExist){
         throw new Error('product not found with given id')
     }
-    let [product] = await db.update(products).set(data).returning()
+    let [product] = await db.update(products).set(data).where(eq(products.id,id)).returning()
     return product
+
 }
 
 export const deleteProduct = async(id:string)=>{
@@ -96,6 +98,28 @@ export const deleteProduct = async(id:string)=>{
     return product
 }
 
+export const createComments  = async (data:NewComment)=>{
+    const [comment] = await db.insert(comments).values(data).returning()
+    return comment
+}
 
 
+export const deleteComment = async (id:string)=>{
+    let commentExist = await getCommentById(id)
+    if(!commentExist){
+        throw new Error('comment not found with given id')
+    }
+    let [comment] = await db.delete(comments).where(eq(comments.id,id)).returning()
+    return comment
+}
+
+
+export const getCommentById = async (id:string)=>{
+
+    return db.query.comments.findFirst({
+        where:eq(comments.id,id),
+        with:{user:true}
+    })
+    
+}
 

@@ -1,12 +1,15 @@
+import { requireAuth } from "@clerk/express"
 import express from "express"
-import { createUser, getUserById, updateUser} from "../controllers/user.controller";
-import {createProduct} from "../controllers/product.controller";
+import { syncUser } from "../controllers/user.controller"
+
+   
 
 const router = express.Router()
 
 
-router.post("/create-user",createUser)
-router.get("/user/:id",getUserById)
-router.patch("update-user",updateUser)
+router.post("/sync", requireAuth, syncUser)
+
+
+
 
 export default router
