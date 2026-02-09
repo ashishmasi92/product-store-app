@@ -14,7 +14,7 @@ try {
         return customResponse(res, 401, false, "unauthorized");
       }
     
-    let productId = req.params.id;
+    let productId = req.params.productId;
     let {content}:NewComment = req.body;
     
     
@@ -38,7 +38,7 @@ try {
 
 
 
-export const deleteComment = async (req:Request,res:Response){
+export const deleteComment = async (req:Request,res:Response)=>{
 try {
     
         let {userId} = getAuth(req);
