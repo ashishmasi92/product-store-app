@@ -1,61 +1,41 @@
-import type {Request,Response} from "express";
+import type { Request, Response } from "express";
 import customResponse from "../utils/customResponse";
-import {getAuth} from "@clerk/express";
-import {upsert} from "../model/queries";
+import { getAuth } from "@clerk/express";
+import { upsert } from "../model/queries";
 import bcrypt from "bcryptjs";
-
-
-
-
 
 // user queries
 
-export const syncUser = async(req:Request,res:Response)=>{
-try {
-   
-    let {userId} = getAuth(req)
-    if(!userId){
-        return customResponse(res,401,false,"unauthorized")
+export const syncUser = async (req: Request, res: Response) => {
+  try {
+    let { userId } = getAuth(req);
+    if (!userId) {
+      return customResponse(res, 401, false, "unauthorized");
     }
 
-let {email,password,imageUrl} = req.body
+    let { email, name, imageUrl } = req.body;
 
-if([email,password,imageUrl].some((field)=>{
-    return !field || field.trim() === ""
-})){
-    return customResponse(res,400,false,"all field are required")
-}
+    if (
+      [email, name, imageUrl].some((field) => {
+        return !field || field.trim() === "";
+      })
+    ) {
+      return customResponse(res, 400, false, "all field are required");
+    }
 
-const hashedPassword = await bcrypt.hash(password, 12)
+    let user = await upsert({
+      id: userId,
+      email,
+      name,
+      imageUrl,
+    });
 
-let user = await upsert({
-    id:userId,
-    email,
-    password: hashedPassword,
-    imageUrl
-})
-
-return customResponse(res,201,true,"user synced successfully",user)
-
-} catch (error) {
-    console.log("error,sync user",error);
-    return customResponse(res,500,false,"internal error")
-}
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return customResponse(res, 201, true, "user synced successfully", user);
+  } catch (error) {
+    console.log("error,sync user", error);
+    return customResponse(res, 500, false, "internal error");
+  }
+};
 
 // export async function createUser(req:Request,res:Response){
 //     try {
@@ -82,8 +62,6 @@ return customResponse(res,201,true,"user synced successfully",user)
 //         return  customResponse(res,500,false,"internal error")
 //     }
 // }
-
-
 
 // export  async function getUserById(req:Request,res:Response){
 //     try {
@@ -112,7 +90,6 @@ return customResponse(res,201,true,"user synced successfully",user)
 //     }
 
 // }
-
 
 // export async function updateUser(req: Request, res: Response) {
 //     try {
