@@ -11,20 +11,22 @@ function useUserSync() {
     mutate: syncUserMutate,
     isPending,
     isSuccess,
+    isError,
   } = useMutation({
     mutationKey: ["syncUser"],
     mutationFn: syncUser,
   });
 
   useEffect(() => {
-    if (isSignedIn && user && !isPending && !isSuccess) {
+    if (isSignedIn && user && !isPending && !isSuccess && !isError) {
       syncUserMutate({
         email: user.primaryEmailAddress?.emailAddress || "",
         name: user.firstName || user.fullName || "",
+      
         imageUrl: user.imageUrl || "",
       });
     }
-  }, [isPending, isSuccess, isSignedIn, user?.id, syncUserMutate]);
+  }, [isPending, isSuccess,isError, isSignedIn, user?.id, syncUserMutate]);
 
   return {
     isSynced: isSuccess,

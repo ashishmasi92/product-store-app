@@ -56,7 +56,7 @@ async function handle<T>(p: Promise<AxiosResponse<ApiResponse<T>>>) {
 
 export async function syncUser(userData: {
   email: string;
-  password: string;
+  name: string;
   imageUrl?: string;
 }) {
   return handle<User>(api.post("/user/sync", userData));
