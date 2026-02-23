@@ -2,5 +2,5 @@ node_modules
 .env
 .idea
 dist
-
+backend_2
 drizzle

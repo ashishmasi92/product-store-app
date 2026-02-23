@@ -5,7 +5,7 @@ import customResponse from "../utils/customResponse";
 import * as productQueries from "../model/queries";
 import { getAuth } from "@clerk/express";
 
-//  public
+//  public - get all products
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
     let products = await productQueries.getAllProducts();
@@ -57,7 +57,7 @@ export const getProductById = async (req: Request, res: Response) => {
       return customResponse(res, 400, false, "id not found");
     }
 
-    let product = await productQueries.getProductById(id);
+    let product = await productQueries.getProductById(id as string);
 
     if (!product) {
       return customResponse(res, 401, false, "invalid user");
@@ -92,6 +92,8 @@ export const createProduct = async (req: Request, res: Response) => {
   }
 };
 
+
+//  update product (protected owner only)
 export const updateProduct = async (req: Request, res: Response) => {
 try {
     let { userId } = getAuth(req);
