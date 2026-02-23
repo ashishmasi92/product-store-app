@@ -21,7 +21,7 @@ try {
         return customResponse(res,400,false,"content is required")
     }
     
-    let comment = await commentQuery.createComments({userId,productId,content})
+    let comment = await commentQuery.createComments({userId: userId as string  ,productId: productId as string ,content})
     if(!comment){
         return customResponse(res,400,false,"comment not created")
     }
@@ -51,7 +51,7 @@ try {
             return customResponse(res,400,false,"invalid comment id")
           }
           
-          const existing = await commentQuery.getCommentById(commentId)
+          const existing = await commentQuery.getCommentById(commentId as string)
           if(!existing){
             return customResponse(res,404,false,"comment not found")
           }
@@ -59,7 +59,7 @@ try {
             return customResponse(res,403,false,"forbidden")
           }
     
-          let comment = await commentQuery.deleteComment(commentId) 
+          let comment = await commentQuery.deleteComment(commentId as string) 
           if(!comment){
             return customResponse(res,400,false,"comment not deleted")
           }

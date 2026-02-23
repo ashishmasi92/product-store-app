@@ -129,9 +129,9 @@ try {
   
     let { email, fullname, imageUrl } = req.body;
   
-    if (!email || !fullname || !imageUrl) {
-      return customResponse(res, 400, false, " all field are required");
-    }
+    if ([email, fullname, imageUrl].some((f) => !f || !f.trim())) {
+      return customResponse(res, 400, false, "all fields are required");
+     }
   
     let user = await upsert({
       id: userId,

@@ -57,7 +57,7 @@ export const getProductById = async (req: Request, res: Response) => {
       return customResponse(res, 400, false, "id not found");
     }
 
-    let product = await productQueries.getProductById(id);
+    let product = await productQueries.getProductById(id as string);
 
     if (!product) {
       return customResponse(res, 401, false, "invalid user");
