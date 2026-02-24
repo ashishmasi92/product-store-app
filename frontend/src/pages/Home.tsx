@@ -3,16 +3,17 @@ import { useProducts } from "../hooks/useProduct";
 import { SignInButton } from "@clerk/clerk-react";
 import { PackageIcon, SparkleIcon } from "lucide-react";
 import image from "../assets/image.png";
+import ProductCard from "../components/ProductCard";
 export default function Home() {
-  let { data, isLoading, isError, error } = useProducts();
+  let { data, isLoading } = useProducts();
 
   if (isLoading) {
     return (
       <>
-        <div className="hero h-64 lg:h-72  bg-base-300 animate-pulse mb-6" />
+        <div className="hero h-64 lg:h-72  bg-base-300 skeleton mb-6" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="card bg-base-200 animate-pulse">
+            <div key={i} className="card bg-base-200 skeleton">
               <div className="h-40 bg-base-300" />
               <div className="p-4 space-y-2">
                 <div className="h-5 w-3/4 bg-base-300" />
@@ -77,14 +78,14 @@ export default function Home() {
 
       {/* products */}
 
-      <div className="">
+      <div className="mt-2">
         <h2 className="text-xl font-bold flex items-center gap-3 mb-4">
           <PackageIcon className="size-5 text-primary" />
           All Products
         </h2>
       </div>
 
-      {data && data.length === 0 ? (
+      {data === undefined || data.length === 0 ? (
         <div className="card bg-base-300">
           <div className="card-body items-center text-center py-16">
             <PackageIcon className="size-16 text-base-content/20" />
@@ -100,7 +101,12 @@ export default function Home() {
           </div>
         </div>
       ) : (
-        <h2>Hello world</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {data.length > 0 &&
+            data.map((item, i) => (
+              <ProductCard key={i} product={item} />
+            ))}
+        </div>
       )}
     </>
   );

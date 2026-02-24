@@ -36,7 +36,7 @@ export const getMyProducts = async (req: Request, res: Response) => {
     if (!myProducts) {
       return customResponse(res, 404, false, "no products found");
     }
-    if(myProducts.length === 0){
+    if (myProducts.length === 0) {
       return customResponse(res, 404, false, "no products found");
     }
 
@@ -79,7 +79,7 @@ export const createProduct = async (req: Request, res: Response) => {
       return customResponse(res, 401, false, "unauthorized");
     }
     const data: NewProduct = req.body;
-    const product = await productQueries.createProduct(data);
+    const product = await productQueries.createProduct({ ...data, userId });
 
     if (!product) {
       return customResponse(res, 400, false, "something went wrong");
@@ -92,24 +92,23 @@ export const createProduct = async (req: Request, res: Response) => {
   }
 };
 
-
 //  update product (protected owner only)
 export const updateProduct = async (req: Request, res: Response) => {
-try {
+  try {
     let { userId } = getAuth(req);
-  
+
     if (!userId) {
       return customResponse(res, 401, false, "unauthorized");
     }
     let id = req.params.id;
     let data = req.body;
-  
+
     let userProduct = await productQueries.getProductById(id as string);
-  
+
     if (!userProduct) {
       return customResponse(res, 404, false, "product not found with given id");
     }
-  
+
     if (userProduct.userId !== userId) {
       return customResponse(
         res,
@@ -118,68 +117,70 @@ try {
         "you are not authorized to update this product",
       );
     }
-  
-    let updatedProduct = await productQueries.updateProduct(id as string,{...data})
-    
-    if(!updatedProduct){
-      return customResponse(res,400,false,"something went wrong")
+
+    let updatedProduct = await productQueries.updateProduct(id as string, {
+      ...data,
+    });
+
+    if (!updatedProduct) {
+      return customResponse(res, 400, false, "something went wrong");
     }
-  
-  return customResponse(res,200,true,"updated product success",updatedProduct)
-} catch (error) {
-  console.log("error while update product",error)
-  return customResponse(res,500,false,"internal error")
-}
+
+    return customResponse(
+      res,
+      200,
+      true,
+      "updated product success",
+      updatedProduct,
+    );
+  } catch (error) {
+    console.log("error while update product", error);
+    return customResponse(res, 500, false, "internal error");
+  }
 };
 
-
-export const deleteProduct = async (req:Request,res:Response)=>{
+export const deleteProduct = async (req: Request, res: Response) => {
   try {
     let { userId } = getAuth(req);
 
-    if(!userId){
-      return customResponse(res,401,false,"unauthorized")
+    if (!userId) {
+      return customResponse(res, 401, false, "unauthorized");
     }
-let id = req.params.id;
+    let id = req.params.id;
 
-let userProduct = await productQueries.getProductById(id as string)
+    let userProduct = await productQueries.getProductById(id as string);
 
-if(!userProduct){
-  return customResponse(res,404,false,"product not found with given id")
-}
+    if (!userProduct) {
+      return customResponse(res, 404, false, "product not found with given id");
+    }
 
-if(userProduct.userId !== userId){
-  return customResponse(res,403,false,"you are not authorized to delete this product")
-}
+    if (userProduct.userId !== userId) {
+      return customResponse(
+        res,
+        403,
+        false,
+        "you are not authorized to delete this product",
+      );
+    }
 
-let deletedProduct = await productQueries.deleteProduct(id as string)
+    let deletedProduct = await productQueries.deleteProduct(id as string);
 
-if(!deletedProduct){
-  return customResponse(res,400,false,"something went wrong")
-}
+    if (!deletedProduct) {
+      return customResponse(res, 400, false, "something went wrong");
+    }
 
-return customResponse(res,200,true,"deleted product success",deletedProduct)
-
-
-
-}catch(error){
-  console.log("error while delete product",error)
-  return customResponse(res,500,false,"internal error")
-}
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return customResponse(
+      res,
+      200,
+      true,
+      "deleted product success",
+      deletedProduct,
+    );
+  } catch (error) {
+    console.log("error while delete product", error);
+    return customResponse(res, 500, false, "internal error");
+  }
+};
 
 // export  async function createProduct(req:Request,res:Response){
 

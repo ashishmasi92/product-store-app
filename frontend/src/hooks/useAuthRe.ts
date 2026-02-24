@@ -2,6 +2,23 @@ import { useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
 import api from "../lib/api";
 
+
+// User logs in
+//         ↓
+// Clerk stores token
+//         ↓
+// You call api.get("/profile")
+//         ↓
+// Interceptor runs first
+//         ↓
+// Token gets attached
+//         ↓
+// Request is sent to backend
+//         ↓
+// Backend verifies token
+
+
+
 function useAuthReq() {
   let { isSignedIn, getToken, isLoaded } = useAuth();
 
