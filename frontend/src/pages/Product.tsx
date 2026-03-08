@@ -1,86 +1,138 @@
-// import { useParams } from "react-router-dom";
-// import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-// import { createComment, getProductById, type Product } from "../lib/fetch";
-// import { useAuth } from "@clerk/clerk-react";
-// import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useDeleteProduct, useProductById } from "../hooks/useProduct";
+import { useAuth } from "@clerk/clerk-react";
+import {
+  ArrowLeftIcon,
+  CalendarIcon,
+  EditIcon,
+  Trash2Icon,
+  UserIcon,
+} from "lucide-react";
+import CommentSection from "../components/CommentSection";
 
-// export default function Product() {
-//   const { id } = useParams<{ id: string }>();
-//   const { isSignedIn } = useAuth();
-//   const qc = useQueryClient();
-//   const [content, setContent] = useState("");
+export default function Product() {
+  let { id } = useParams();
+  let { userId } = useAuth();
+  let navigate = useNavigate();
+  let { data: product, error } = useProductById(id ?? "");
+  let deleteProduct = useDeleteProduct();
 
-  // const { data, isLoading, isError, error } = useQuery<Product>({
-  //   queryKey: ["product", id],
-  //   queryFn: () => getProductById(id!),
-  //   enabled: !!id,
-  // });
 
-  // const addComment = useMutation({
-  //   mutationFn: () => createComment({ productId: id!, content }),
-  //   onSuccess: () => {
-  //     setContent("");
-  //     qc.invalidateQueries({ queryKey: ["product", id] });
-  //   },
-  // });
+  
+  let deleteHandle = () => {
+    if (confirm("Are your sure you want to delete this product permanently ?"))
+      deleteProduct.mutate(id!, {
+        onSuccess: () => {
+          navigate("/");
+        },
+      });
+  };
 
-  // if (isLoading) {
-  //   return <div className="loading loading-lg" />;
-  // }
-  // if (isError) {
-  //   return <div className="alert alert-error">{(error as Error)?.message}</div>;
-  // }
-  // if (!data) {
-  //   return <div className="text-center text-base-content/70">Not found</div>;
-  // }
+  if (error || !product) {
+    return (
+      <div className="card bg-base-300 max-w-md mx-auto">
+        <div className="card-body items-center text-center">
+          <h2 className="card-title text-error">Product Not Found</h2>
+          <Link to="/" className=" btn btn-primary btn-sm">
+            Go Back
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
-  // return (
-    // <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    //   <div className="lg:col-span-2">
-    //     <img src={data.imageUrl} alt={data.title} className="w-full rounded-xl" />
-    //     <h1 className="mt-4 text-2xl font-semibold">{data.title}</h1>
-    //     <p className="mt-2">{data.description}</p>
-    //   </div>
-    //   <div className="lg:col-span-1">
-    //     <div className="card bg-base-200">
-    //       <div className="card-body">
-    //         <h2 className="card-title">Comments</h2>
-    //         {data.comments && data.comments.length > 0 ? (
-    //           <ul className="space-y-3">
-    //             {data.comments.map((c) => (
-    //               <li key={c.id} className="p-3 bg-base-300 rounded">
-    //                 <div className="text-sm">{c.content}</div>
-    //                 <div className="text-xs text-base-content/60">{c.user?.email}</div>
-    //               </li>
-    //             ))}
-    //           </ul>
-    //         ) : (
-    //           <div className="text-sm text-base-content/70">No comments yet</div>
-    //         )}
+  const isOwner = userId === product.userId;
 
-    //         {isSignedIn && (
-    //           <form
-    //             className="mt-4 flex gap-2"
-    //             onSubmit={(e) => {
-    //               e.preventDefault();
-    //               if (!content.trim()) return;
-    //               addComment.mutate();
-    //             }}
-    //           >
-    //             <input
-    //               className="input input-bordered flex-1"
-    //               placeholder="Write a comment"
-    //               value={content}
-    //               onChange={(e) => setContent(e.target.value)}
-    //             />
-    //             <button className="btn btn-primary" disabled={addComment.isPending}>
-    //               {addComment.isPending ? "Posting..." : "Post"}
-    //             </button>
-    //           </form>
-    //         )}
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
-//   );
-// }
+  return (
+    <>
+    
+      <div className="max-w-4xl  mx-auto space-y-4">
+        <div className="flex items-center justify-between">
+          <Link to="/" className="btn btn-primary btn-sm">
+            <ArrowLeftIcon className="size-4" />
+            Back
+          </Link>
+          {isOwner && (
+            <div className="flex gap-2">
+              <Link
+                to={`/edit/${product.id}`}
+                className="btn btn-ghost btn-sm gap-1"
+              >
+                <EditIcon className="size-4" /> Edit
+              </Link>
+
+              <button
+                onClick={deleteHandle}
+                className="btn btn-error btn-sm ga-1"
+                disabled={deleteProduct.isPending}
+              >
+                {deleteProduct.isPending ? (
+                  <span className="loading loading-spinner loading-xs" />
+                ) : (
+                  <Trash2Icon className="size-4" />
+                )}
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-4">
+          {/* image */}
+          <div className="card bg-base-300">
+            <figure className="p-3">
+              <img
+                src={product.imageUrl}
+                alt={product.title}
+                className=" rounded-xl w-full h-80 object-cover"
+              />
+            </figure>
+          </div>
+          <div className="card bg-base-300">
+            <div className="card-body">
+              <h1 className="card-title font-sans text-sm">{product.title}</h1>
+
+              <div className="flex flex-wrap gap-4 text-[12px] text-base-content/60">
+                <div className="flex items-center ">
+                  <CalendarIcon className="size-3" />
+                  {new Date(product.createdAt).toLocaleDateString()}
+                </div>
+                <div className="flex items-center gap-1">
+                  <UserIcon className="size-4" />
+                  {product.user?.fullname}
+                </div>
+              </div>
+
+              <div className="divider my-1"></div>
+              <p className="text-base-content/80 leading-relaxed text-sm">
+                {product.description}
+              </p>
+
+              {product.user && (
+                <>
+                  <div className="divider my-2"></div>
+                  <div className="flex items-center gap-3">
+                    <div className="avatar">
+                      <div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                        <img src={product.user?.imageUrl!} />
+                      </div>
+                    </div>
+                    <div className="">
+                      <p className="font-semibold">{product.user.fullname}</p>
+                      <p className="text-sm text-base-content/50">Creator</p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+        {/* comment Section */}
+        <div className="  card bg-base-300">
+          <div className="card-body ">
+            <CommentSection currentUser={userId!} productId={id!} comments={product.comments} />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

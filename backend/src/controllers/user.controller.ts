@@ -2,40 +2,39 @@ import type { Request, Response } from "express";
 import customResponse from "../utils/customResponse";
 import { getAuth } from "@clerk/express";
 import { upsert } from "../model/queries";
-import bcrypt from "bcryptjs";
 
 // user queries
 
-export const syncUser = async (req: Request, res: Response) => {
-  try {
-    let { userId } = getAuth(req);
-    if (!userId) {
-      return customResponse(res, 401, false, "unauthorized");
-    }
+// export const syncUser = async (req: Request, res: Response) => {
+//   try {
+//     let { userId } = getAuth(req);
+//     if (!userId) {
+//       return customResponse(res, 401, false, "unauthorized");
+//     }
 
-    let { email, name, imageUrl } = req.body;
+//     let { email, fullname, imageUrl } = req.body;
 
-    if (
-      [email, name, imageUrl].some((field) => {
-        return !field || field.trim() === "";
-      })
-    ) {
-      return customResponse(res, 400, false, "all field are required");
-    }
+//     if (
+//       [email, fullname, imageUrl].some((field) => {
+//         return !field || field.trim() === "";
+//       })
+//     ) {
+//       return customResponse(res, 400, false, "all field are required");
+//     }
 
-    let user = await upsert({
-      id: userId,
-      email,
-      name,
-      imageUrl,
-    });
+//     let user = await upsert({
+//       id: userId,
+//       email,
+//       fullname,
+//       imageUrl,
+//     });
 
-    return customResponse(res, 201, true, "user synced successfully", user);
-  } catch (error) {
-    console.log("error,sync user", error);
-    return customResponse(res, 500, false, "internal error");
-  }
-};
+//     return customResponse(res, 201, true, "user synced successfully", user);
+//   } catch (error) {
+//     console.log("error,sync user", error);
+//     return customResponse(res, 500, false, "internal error");
+//   }
+// };
 
 // export async function createUser(req:Request,res:Response){
 //     try {
@@ -116,3 +115,35 @@ export const syncUser = async (req: Request, res: Response) => {
 //         return customResponse(res, 500, false, "internal error")
 //     }
 // }
+
+
+
+
+export const syncUser = async (req: Request, res: Response) => {
+try {
+    let { userId } = getAuth(req);
+  
+    if (!userId) {
+      return customResponse(res, 401, false, "unauthorized");
+    }
+  
+    let { email, fullname, imageUrl } = req.body;
+  
+    if ([email, fullname, imageUrl].some((f) => !f || !f.trim())) {
+      return customResponse(res, 400, false, "all fields are required");
+     }
+  
+    let user = await upsert({
+      id: userId,
+      email,
+      fullname,
+      imageUrl,
+    });
+  
+    return customResponse(res, 201, true, "user synced successfully", user);
+} catch (error) {
+    console.log("error,sync user", error);
+    return customResponse(res, 500, false, "internal error");
+}
+
+};

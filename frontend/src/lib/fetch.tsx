@@ -9,7 +9,7 @@ type ApiResponse<T> = {
 
 export type User = {
   id: string;
-  name: string;
+  fullname: string;
   email: string;
   imageUrl?: string | null;
 };
@@ -32,7 +32,7 @@ export type Product = {
   updatedAt: string;
   userId: string | null;
   user?: User;
-  comment?: Comment[];
+  comments?: Comment[];
 };
 
 // async function handle<T>(p: Promise<AxiosResponse<ApiResponse<T>>>) {
@@ -44,6 +44,9 @@ export type Product = {
 //   return body.data as T;
 // }
 
+//  this function wait for the api response and return the data if success or throw an error if not
+//  it is used to handle the api response in a consistent way
+
 async function handle<T>(p: Promise<AxiosResponse<ApiResponse<T>>>) {
   const res = await p;
   const b = res.data;
@@ -54,9 +57,11 @@ async function handle<T>(p: Promise<AxiosResponse<ApiResponse<T>>>) {
   return b.data as T;
 }
 
+// Promise
+
 export async function syncUser(userData: {
   email: string;
-  name: string;
+  fullname: string;
   imageUrl?: string;
 }) {
   return handle<User>(api.post("/user/sync", userData));
@@ -104,4 +109,8 @@ export async function createComment(input: {
 }) {
   const { productId, content } = input;
   return handle<Comment>(api.post(`/comment/${productId}`, { content }));
+}
+
+export async function deleteComment(commentId: string) {
+  return handle<Comment>(api.delete(`comment/${commentId}`));
 }
