@@ -20,14 +20,10 @@ export const createComment = async (req: Request, res: Response) => {
     if (!content) {
       return customResponse(res, 400, false, "content is required");
     }
-
-    let comment = await commentQuery.createComments({
-      userId: userId as string,
-      productId: productId as string,
-      content,
-    });
-    if (!comment) {
-      return customResponse(res, 400, false, "comment not created");
+    
+    let comment = await commentQuery.createComments({userId: userId as string  ,productId: productId as string ,content})
+    if(!comment){
+        return customResponse(res,400,false,"comment not created")
     }
 
     return customResponse(res, 201, true, "comment created", comment);
