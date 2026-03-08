@@ -47,6 +47,7 @@ export type Product = {
 //  this function wait for the api response and return the data if success or throw an error if not
 //  it is used to handle the api response in a consistent way
 
+
 async function handle<T>(p: Promise<AxiosResponse<ApiResponse<T>>>) {
   const res = await p;
   const b = res.data;
@@ -66,6 +67,7 @@ export async function syncUser(userData: {
 }) {
   return handle<User>(api.post("/user/sync", userData));
 }
+
 
 export async function getAllProducts() {
   return handle<Product[]>(api.get("/product"));
