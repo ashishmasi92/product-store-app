@@ -14,11 +14,9 @@ export default function Product() {
   let { id } = useParams();
   let { userId } = useAuth();
   let navigate = useNavigate();
-  let { data: product, error } = useProductById(id ?? "");
+  let { data: product, error, isLoading } = useProductById(id ?? "");
   let deleteProduct = useDeleteProduct();
 
-
-  
   let deleteHandle = () => {
     if (confirm("Are your sure you want to delete this product permanently ?"))
       deleteProduct.mutate(id!, {
@@ -27,6 +25,14 @@ export default function Product() {
         },
       });
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center mt-10">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
 
   if (error || !product) {
     return (
@@ -45,7 +51,6 @@ export default function Product() {
 
   return (
     <>
-    
       <div className="max-w-4xl  mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="btn btn-primary btn-sm">
@@ -63,7 +68,7 @@ export default function Product() {
 
               <button
                 onClick={deleteHandle}
-                className="btn btn-error btn-sm ga-1"
+                className="btn btn-error btn-sm gap-1"
                 disabled={deleteProduct.isPending}
               >
                 {deleteProduct.isPending ? (
@@ -113,7 +118,10 @@ export default function Product() {
                   <div className="flex items-center gap-3">
                     <div className="avatar">
                       <div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                        <img src={product.user?.imageUrl!} />
+                        <img
+                          src={product.user?.imageUrl! ?? ""}
+                          alt={product.user?.fullname ?? "user"}
+                        />
                       </div>
                     </div>
                     <div className="">
@@ -129,7 +137,11 @@ export default function Product() {
         {/* comment Section */}
         <div className="  card bg-base-300">
           <div className="card-body ">
-            <CommentSection currentUser={userId!} productId={id!} comments={product.comments} />
+            <CommentSection
+              currentUser={userId!}
+              productId={id!}
+              comments={product.comments}
+            />
           </div>
         </div>
       </div>

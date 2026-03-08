@@ -75,8 +75,7 @@ export default function Profile() {
           {products &&
             products.map((product) => {
               return (
-                <>
-                  <div
+                 <div
                     className="card card-side my-5 bg-base-300 "
                     key={product.id}
                   >
@@ -115,7 +114,6 @@ export default function Profile() {
                       </div>
                     </div>
                   </div>
-                </>
               );
             })}
         </div>
