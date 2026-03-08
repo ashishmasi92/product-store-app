@@ -26,9 +26,10 @@ export default function CommentSection({
   let createComment = useCreateComment();
   let deleteComment = useDeleteComment(productId);
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     if (!content.trim()) return;
 
+    e.preventDefault();
     createComment.mutate(
       { productId, content },
       {
@@ -38,7 +39,6 @@ export default function CommentSection({
       },
     );
   };
-
 
   return (
     <div className="space-y-4">
@@ -104,8 +104,8 @@ export default function CommentSection({
                   <div className="chat-image avatar">
                     <div className="w-8 rounded-full">
                       <img
-                        src={text.user?.imageUrl!}
-                        alt={text.user?.fullname}
+                          src={text.user?.imageUrl ?? undefined}
+                       alt={text.user?.fullname ?? "User avatar"}
                       />
                     </div>
                   </div>
@@ -125,8 +125,7 @@ export default function CommentSection({
                     <div className="chat-footer">
                       <button
                         onClick={() =>
-                          confirm("Delete ? ") &&
-                          deleteComment.mutate(text.id)
+                          confirm("Delete ? ") && deleteComment.mutate(text.id)
                         }
                         className="btn btn-ghost btn-sm text-error"
                         disabled={deleteComment.isPending}

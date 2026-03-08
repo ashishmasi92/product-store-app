@@ -35,6 +35,7 @@ export default function EditProductForm({
     description: product.description,
     imageUrl: product.imageUrl,
   });
+  let [imageLoadFailed, setImageLoadFailed] = useState(false);
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,6 +45,9 @@ export default function EditProductForm({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
+    if (name === "imageUrl") {
+      setImageLoadFailed(false);
+    }
     setFormData({ ...formData, [name]: value });
   };
 
@@ -88,14 +92,14 @@ export default function EditProductForm({
                 required
               />
             </label>
-            {formData && (
+            {formData && !imageLoadFailed && (
               <div className="rounded-box overflow-hidden mt-2">
                 <img
                   src={formData.imageUrl}
                   className="w-full h-50 object-cover"
                   alt="preview"
                   onError={(e) => {
-                    e.currentTarget.style.display = "none";
+                    setImageLoadFailed(true);
                   }}
                 />
               </div>
