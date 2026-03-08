@@ -94,7 +94,7 @@ export default function Create() {
               <div className="rounded-box overflow-hidden">
                 <img
                   src={formData.imageUrl}
-                  className="w-full h--40 object-cover"
+                  className="w-full h-40 object-cover"
                   alt="preview"
                 />
               </div>

@@ -41,7 +41,7 @@ export default function ProductCard({ product }: Props) {
           {product.user && (
             <div className="avatar space-x-2">
               <div className="w-6 rounded-full ring-1 ring-primary">
-                <img src={product.user.imageUrl!} alt={product.user.fullname} />
+                <img src={product.user.imageUrl! ?? ""} alt={product.user.fullname} />
               </div>
               <span className="text-sm text-base-content/60">
                 {product.user.fullname}
@@ -49,10 +49,10 @@ export default function ProductCard({ product }: Props) {
             </div>
           )}
 
-          {product.comment && (
+          {product.comments && (
             <div className="flex items-center gap-1 text-base-content/50">
               <MessageCircleIcon className="w-4 h-4" />
-              <span className="text-sm">{product.comment.length}</span>
+              <span className="text-sm">{product.comments.length}</span>
             </div>
           )}
         </div>

@@ -99,7 +99,7 @@ export const deleteProduct = async(id:string)=>{
 }
 
 export const createComments  = async (data:NewComment)=>{
-    const [comment] = await db.insert(comments).values(data).returning()
+    const [comment] = await db.insert(comments).values(data).returning();
     return comment
 }
 

@@ -32,7 +32,7 @@ export type Product = {
   updatedAt: string;
   userId: string | null;
   user?: User;
-  comment?: Comment[];
+  comments?: Comment[];
 };
 
 // async function handle<T>(p: Promise<AxiosResponse<ApiResponse<T>>>) {
@@ -111,4 +111,8 @@ export async function createComment(input: {
 }) {
   const { productId, content } = input;
   return handle<Comment>(api.post(`/comment/${productId}`, { content }));
+}
+
+export async function deleteComment(commentId: string) {
+  return handle<Comment>(api.delete(`comment/${commentId}`));
 }

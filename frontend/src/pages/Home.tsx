@@ -5,6 +5,7 @@ import { PackageIcon, SparkleIcon } from "lucide-react";
 import image from "../assets/image.png";
 import ProductCard from "../components/ProductCard";
 export default function Home() {
+  
   let { data, isLoading } = useProducts();
 
   if (isLoading) {
@@ -27,16 +28,7 @@ export default function Home() {
     );
   }
 
-  // if (isError) {
-  //   return <div className="alert alert-error">{(error as Error)?.message}</div>;
-  // }
-
-  // if (!data || data.length === 0) {
-  //   return (
-  //     <div className="text-center text-base-content/70">No products found</div>
-  //   );
-  // }
-
+ 
   return (
     <>
       <div className="space-10">
@@ -101,7 +93,7 @@ export default function Home() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {data.length > 0 &&
             data.map((item, i) => (
               <ProductCard key={i} product={item} />
